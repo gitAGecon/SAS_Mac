@@ -15,6 +15,6 @@ data parms; set parms; if counter = &i then call symputx("val",Estimate); run;
 data test; set test; x&i = &name.*&val; run;
 %end;
 data parms; set parms; drop counter; run;
-data test; set test; pred = sum(of x2-%sysfunc(compress(x&n))) + &int; run;
+data testpred; set test; pred = sum(of x2-%sysfunc(compress(x&n))) + &int; run;
 %mend;
 %predit;
