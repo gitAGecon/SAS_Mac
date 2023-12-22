@@ -1,0 +1,20 @@
+/*COMBINE WITH DUMMY MACRO FOR CLASS VARS IN MODEL*/
+ods output ParameterEstimates=parms;
+
+/*MODEL HERE*/
+
+%macro predit;
+data parms; set parms; effect = translate(trim(effect),'_','-'); run;
+data parms; set parms; effect = translate(trim(effect),'_',' '); run;
+data parms; set parms; counter+1; run;
+data parms; set parms; if counter = 1 then call symputx("int",Estimate); run;
+proc sql noprint; select count(*) into :N from parms; quit;
+%do i = 2 %to &N;
+data parms; set parms; if counter = &i then call symputx("name",Effect); run;
+data parms; set parms; if counter = &i then call symputx("val",Estimate); run;
+data test; set test; x&i = &name.*&val; run;
+%end;
+data parms; set parms; drop counter; run;
+data test; set test; pred = sum(of x2-%sysfunc(compress(x&n))) + &int; run;
+%mend;
+%predit;
