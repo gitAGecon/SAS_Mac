@@ -1,0 +1,13 @@
+%macro lst(dsn=,name=);
+  %local dsid cnt rc;
+  %global &name;
+  %let &name =;
+  %let dsid=%sysfunc(open(&dsn));
+   %if &dsid ne 0 %then %do;  %let cnt=%sysfunc(attrn(&dsid,nvars));
+   %do i = 1 %to &cnt;
+    %let &name = &&&name %sysfunc(varname(&dsid,&i));
+   %end;
+  %end;
+    %else %put &dsn cannot be open.;
+  %let rc=%sysfunc(close(&dsid));
+%mend lst;
