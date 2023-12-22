@@ -1,3 +1,4 @@
+%let varlist = model make vehicle_type fuel_type state region region_census age_cat;
 %macro dumit(ds=);
 %do i = 1 %to %sysfunc(countw(&varlist));
 %let x = %scan(&varlist,&i);
