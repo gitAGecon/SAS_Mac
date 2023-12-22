@@ -1,0 +1,13 @@
+%macro dumit(ds=);
+%do i = 1 %to %sysfunc(countw(&varlist));
+%let x = %scan(&varlist,&i);
+data temp; set &ds; keep %scan(&varlist,&i); run;
+data temp; set temp; _Y = 0;
+proc glmselect data=temp NOPRINT outdesign(addinputvars)=%scan(&varlist,&i)(drop=_Y);
+   class      %scan(&varlist,&i);   /* list the categorical variables here */
+   model _Y = %scan(&varlist,&i) /  noint selection=none;
+run;
+data %scan(&varlist,&i); set %scan(&varlist,&i); drop %scan(&varlist,&i); run;
+data &ds; merge &ds %scan(&varlist,&i); run;
+%end;
+%mend;
